@@ -5,11 +5,11 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class HelloApplication extends Application {
+public class TMEditorApp extends Application {
     @Override
     public void start(Stage stage) {
         Scene scene = new Scene(new Group(), 320, 240);
-        stage.setTitle("Hello!");
+        stage.setTitle("Turing Machine Editor");
         stage.setScene(scene);
         stage.show();
     }
