@@ -1,6 +1,5 @@
 package com.ehaney.turingmachineeditor.model;
 
-import java.util.Collection;
 import java.util.LinkedList;
 
 /**
