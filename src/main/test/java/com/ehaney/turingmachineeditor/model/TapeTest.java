@@ -29,16 +29,12 @@ class TapeTest {
         @Test
         @DisplayName("size equals the number of tokens in the input string")
         void size_equals_the_number_of_tokens_in_the_input_string() {
-            String a = "[a] b c d";
-            String b = "";
-            String c = "w [x] y z $ a b c";
-
             assertEquals(4,
-                    new Tape(a).size());
+                    new Tape("[a] b c d").size());
             assertEquals(0,
-                    new Tape(b).size());
+                    new Tape("").size());
             assertEquals(8,
-                    new Tape(c).size());
+                    new Tape("w [x] y z $ a b c").size());
         }
 
         @Test
