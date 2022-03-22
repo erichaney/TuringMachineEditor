@@ -79,6 +79,10 @@ public class Tape {
             String symbol = tokens[i];
             if (symbol.startsWith("[") && symbol.endsWith("]")) {
                 originIndex = i;
+                symbol = symbol.substring(1,2);
+            }
+            if (!symbol.equals("")) {
+                tape.addLast(symbol);
             }
         }
     }
@@ -138,7 +142,7 @@ public class Tape {
      *
      * @return The tape position of the rightmost cell in the tape's viewed region.
      */
-    private  int getRightBound() {
+    public int getRightBound() {
         return tape.size() - 1 - originIndex;
     }
 
