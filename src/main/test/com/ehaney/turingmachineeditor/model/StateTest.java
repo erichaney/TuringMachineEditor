@@ -17,7 +17,7 @@ class StateTest {
     @DisplayName("to string format is correct")
     void to_string_format_is_correct() {
         assertEquals("0 H",
-                new State("0", State.Command.H));
+                new State("0", State.Command.H).toString());
     }
 
     @Test
