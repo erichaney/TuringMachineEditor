@@ -5,15 +5,15 @@ import java.util.List;
 
 public class State {
 
-    public enum Command {L, R, H, Y, N;}
+    public enum Action {L, R, H, Y, N;}
 
     private String id;
 
-    private Command command;
+    private Action action;
     private List<Transition> transitions;
-    public State(String id, Command command) {
+    public State(String id, Action action) {
         this.id = id;
-        this.command = command;
+        this.action = action;
         transitions = new ArrayList<>();
     }
 
@@ -38,6 +38,6 @@ public class State {
 
     @Override
     public String toString() {
-        return id + " " + command.toString();
+        return id + " " + action.toString();
     }
 }
