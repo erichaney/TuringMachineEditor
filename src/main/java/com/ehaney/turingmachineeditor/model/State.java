@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class State {
-    public enum Command {L, R, H, Y, N}
+
+    public enum Command {L, R, H, Y, N;}
 
     private String id;
+
     private Command command;
     private List<Transition> transitions;
-
     public State(String id, Command command) {
         this.id = id;
         this.command = command;
@@ -18,6 +19,11 @@ public class State {
 
     public String getID() {
         return id;
+    }
+
+    public State addTransition(Transition t) {
+        transitions.add(t);
+        return this;
     }
 
     public List<Transition> getTransitions() {
