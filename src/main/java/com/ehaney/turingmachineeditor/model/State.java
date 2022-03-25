@@ -42,6 +42,16 @@ public class State {
     public List<Transition> getTransitions() {
         return transitions;
     }
+
+    public boolean hasTransition(String readSymbol, String writeSymbol, State toState) {
+        return transitions.stream()
+                .anyMatch(t -> {
+                    return t.getReadSymbol().equals(readSymbol) &&
+                            t.getWriteSymbol().equals(writeSymbol) &&
+                            t.getToState().equals(toState);
+                });
+    }
+
     public boolean removeTransition(Transition t) {
         if (t == null)
             return false;
