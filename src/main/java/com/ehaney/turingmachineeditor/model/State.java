@@ -3,6 +3,14 @@ package com.ehaney.turingmachineeditor.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The data model of a state of a Turing Machine.
+ * <p>
+ * States have a unique id and a tape action, which is one of: L, R, H, Y, or N.
+ * <p>
+ * States are linked through transition objects. Each state keeps a list of the
+ * transitions that originate from it.
+ */
 public class State {
 
     public enum Action {L, R, H, Y, N;}
