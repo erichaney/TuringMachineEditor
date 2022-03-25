@@ -26,7 +26,7 @@ class StateTest {
         State s = new State("0", State.Action.R);
         s.addTransition("a", "b", s);
         assertEquals(1, s.getTransitions().size());
-        assertTrue(s.hasTransition("a", "b", s));
+        assertTrue(s.hasTransition("a"));
     }
 
     @Test

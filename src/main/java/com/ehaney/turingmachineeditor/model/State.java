@@ -1,15 +1,17 @@
 package com.ehaney.turingmachineeditor.model;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The data model of a state of a Turing Machine.
  * <p>
  * States have a unique id and a tape action, which is one of: L, R, H, Y, or N.
  * <p>
- * States are linked through transition objects. Each state keeps a list of the
- * transitions that originate from it.
+ * States are linked through transition objects. Each state keeps a map of the
+ * transitions that originate from it, keyed by the symbol that must be read on
+ * the tape to activate that transition.
  */
 public class State {
 
@@ -19,12 +21,12 @@ public class State {
 
     private Action action;
 
-    private List<Transition> transitions;
+    private Map<String, Transition> transitions;
 
     public State(String id, Action action) {
         this.id = id;
         this.action = action;
-        transitions = new ArrayList<>();
+        transitions = new HashMap<>();
     }
 
     public String getID() {
@@ -40,53 +42,35 @@ public class State {
     }
 
     public State addTransition(String readSymbol, String writeSymbol, State toState) {
-        if (!hasTransition(readSymbol, writeSymbol, toState)) {
-            Transition t = new Transition(this, readSymbol, writeSymbol, toState);
-            transitions.add(t);
+        if (!transitions.containsKey(readSymbol)) {
+            transitions.put(readSymbol,
+                    new Transition(this, readSymbol, writeSymbol, toState));
         }
+
         return this;
     }
 
     public List<Transition> getTransitions() {
-        return transitions;
-    }
-
-    public boolean hasTransition(String readSymbol, String writeSymbol, State toState) {
-        return transitions.stream()
-                .anyMatch(t -> {
-                    return t.getReadSymbol().equals(readSymbol) &&
-                            t.getWriteSymbol().equals(writeSymbol) &&
-                            t.getToState().equals(toState);
-                });
+        return transitions.values().stream().toList();
     }
 
     public boolean hasTransition(String readSymbol) {
-        return transitions.stream().anyMatch(t -> t.getReadSymbol().equals(readSymbol));
-    }
-
-    public Transition getTransition(String readSymbol, String writeSymbol, State toState) {
-        return transitions.stream()
-                .filter(t -> {
-                    return t.getReadSymbol().equals(readSymbol) &&
-                            t.getWriteSymbol().equals(writeSymbol) &&
-                            t.getToState().equals(toState);
-                })
-                .findFirst()
-                .orElseGet(null);
+        return transitions.containsKey(readSymbol);
     }
 
     public Transition getTransition(String readSymbol) {
-        return transitions.stream()
-                .filter(t -> t.getReadSymbol().equals(readSymbol))
-                .findFirst()
-                .orElseGet(null);
+        return transitions.get(readSymbol);
     }
 
     public boolean removeTransition(Transition t) {
         if (t == null)
             return false;
         t.deleteLink();
-        return transitions.remove(t);
+        return transitions.remove(t.getReadSymbol(), t);
+    }
+
+    public boolean removeTransition(String readSymbol) {
+        return removeTransition(transitions.get(readSymbol));
     }
 
     @Override
