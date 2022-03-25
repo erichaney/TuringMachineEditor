@@ -27,9 +27,7 @@ public class Transition {
              throw new IllegalStateException("A state cannot have two or more " +
                      "transitions with the same scanned symbol.");
          }
-
-         fromState.addTransition(readSymbol, this.writeSymbol, this.toState);
-         fromState.removeTransition(this);
+         fromState.updateTransitionKey(readSymbol, this);
     }
 
     public String getWriteSymbol() {

@@ -133,6 +133,22 @@ public class State {
         return removeTransition(transitions.get(readSymbol));
     }
 
+    /**
+     * Remap the given transition to the new key.
+     * @param newKey The new read symbol on the tape associated with the transition.
+     * @param t The transition to remap.
+     * @return True if the transition could be remapped, false otherwise.
+     */
+    public boolean updateTransitionKey(String newKey, Transition t) {
+        if (t == null || !transitions.containsValue(t)) {
+            return false;
+        } else {
+            transitions.remove(t.getReadSymbol());
+            transitions.put(newKey, t);
+            return true;
+        }
+    }
+
     @Override
     public String toString() {
         return id + " " + action.toString();
