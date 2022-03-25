@@ -60,6 +60,28 @@ public class State {
                 });
     }
 
+    public boolean hasTransition(String readSymbol) {
+        return transitions.stream().anyMatch(t -> t.getReadSymbol().equals(readSymbol));
+    }
+
+    public Transition getTransition(String readSymbol, String writeSymbol, State toState) {
+        return transitions.stream()
+                .filter(t -> {
+                    return t.getReadSymbol().equals(readSymbol) &&
+                            t.getWriteSymbol().equals(writeSymbol) &&
+                            t.getToState().equals(toState);
+                })
+                .findFirst()
+                .orElseGet(null);
+    }
+
+    public Transition getTransition(String readSymbol) {
+        return transitions.stream()
+                .filter(t -> t.getReadSymbol().equals(readSymbol))
+                .findFirst()
+                .orElseGet(null);
+    }
+
     public boolean removeTransition(Transition t) {
         if (t == null)
             return false;
