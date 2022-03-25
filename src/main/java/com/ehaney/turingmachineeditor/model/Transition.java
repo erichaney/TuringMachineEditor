@@ -41,4 +41,12 @@ public class Transition {
                 readSymbol + " " +
                 writeSymbol;
     }
+
+    public State getToState() {
+         return toState;
+    }
+
+    public State getFromState() {
+         return fromState;
+    }
 }
