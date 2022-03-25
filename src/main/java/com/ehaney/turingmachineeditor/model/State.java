@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class State {
 
-    /** The tape actions that may be performed on entry to a state. */
+    /** The possible tape actions performed on entry to a state. */
     public enum Action {L, R, H, Y, N;}
 
     /** The unique identifier of the state. */
