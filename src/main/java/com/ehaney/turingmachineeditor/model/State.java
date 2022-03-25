@@ -10,17 +10,24 @@ public class State {
     private String id;
 
     private Action action;
+
     private List<Transition> transitions;
     public State(String id, Action action) {
         this.id = id;
         this.action = action;
         transitions = new ArrayList<>();
     }
-
     public String getID() {
         return id;
     }
 
+    public Action getAction() {
+        return action;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
+    }
     public State addTransition(Transition t) {
         transitions.add(t);
         return this;

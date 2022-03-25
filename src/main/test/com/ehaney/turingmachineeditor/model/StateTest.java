@@ -44,4 +44,30 @@ class StateTest {
         assertEquals(0, s1.getTransitions().size());
 
     }
+
+    @Test
+    @DisplayName("can remove a transition")
+    void can_remove_a_transition() {
+        State s = new State("0", State.Action.R);
+        Transition t = new Transition(s, "0", "1", s);
+        s.addTransition(t);
+        assertTrue(s.removeTransition(t));
+    }
+
+    @Test
+    @DisplayName("can_get_id")
+    void can_get_id() {
+        assertEquals("1",
+                new State("1", State.Action.H).getID());
+    }
+
+    @Test
+    @DisplayName("can get and set state actions")
+    void can_get_and_set_state_actions() {
+        State s = new State("0", State.Action.R);
+        assertEquals(State.Action.R, s.getAction());
+
+        s.setAction(State.Action.L);
+        assertEquals(State.Action.L, s.getAction());
+    }
 }
