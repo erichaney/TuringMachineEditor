@@ -12,11 +12,13 @@ public class State {
     private Action action;
 
     private List<Transition> transitions;
+
     public State(String id, Action action) {
         this.id = id;
         this.action = action;
         transitions = new ArrayList<>();
     }
+
     public String getID() {
         return id;
     }
@@ -28,8 +30,12 @@ public class State {
     public void setAction(Action action) {
         this.action = action;
     }
-    public State addTransition(Transition t) {
-        transitions.add(t);
+
+    public State addTransition(String readSymbol, String writeSymbol, State toState) {
+        if (!hasTransition(readSymbol, writeSymbol, toState)) {
+            Transition t = new Transition(this, readSymbol, writeSymbol, toState);
+            transitions.add(t);
+        }
         return this;
     }
 
