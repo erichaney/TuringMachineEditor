@@ -53,4 +53,8 @@ public class Transition {
     public State getFromState() {
          return fromState;
     }
+
+    public void linkTo(State s) {
+        toState = s;
+    }
 }
