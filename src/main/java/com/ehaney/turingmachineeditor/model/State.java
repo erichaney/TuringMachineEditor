@@ -69,7 +69,10 @@ public class State {
      * @return This state with the added transition.
      */
     public State addTransition(String readSymbol, String writeSymbol, State toState) {
-        if (!transitions.containsKey(readSymbol)) {
+        if (transitions.containsKey(readSymbol)) {
+            throw new IllegalStateException("A state cannot have two or more " +
+                    "transitions with the same scanned symbol.");
+        } else {
             transitions.put(readSymbol,
                     new Transition(this, readSymbol, writeSymbol, toState));
         }
