@@ -1,21 +1,20 @@
 package com.ehaney.turingmachineeditor.model;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * The data model of the Turing Machine's tape and read/write head.
  *
- * The logical coordinates of cells on the Tape are called "positions" and are
- * like those of an integer number line, including their extent to positive and
- * negative infinity. Thus, no position is considered out of bounds on a tape
- * -- though indexing it using far-out positions is likely to return just the
- * blank symbol.
+ * The indices of cells on the Tape are like those of an integer number line,
+ * extending to positive and negative infinity with an origin at zero. Thus, no
+ * index is considered out of bounds on a tape -- though indexing it using
+ * far-out positions is likely to return just the blank symbol.
  *
  * Although a Tape acts as if it has an infinite size, the size method is supported
  * and returns a finite value. The size of a tape is interpreted to mean the
  * "visible" size: the number of cells that are given as initial input plus any
  * additional cells that have been "seen" by the tape head as it moves left and
- * right along the tape. The extreme left and right tape position of this visible
+ * right along the tape. The extreme left and right tape index of this visible
  * region are called the left bound and right bound.
  */
 public class Tape {
@@ -23,33 +22,25 @@ public class Tape {
     /** The symbol representing a blank space on the tape. */
     public static final String BLANK_SYMBOL = "#";
 
-    /** The Turing Machine's tape of symbols. */
-    private LinkedList<String> tape;
+    /** The tape symbols with negative indices. */
+    private ArrayList<String> tapeNegative;
+
+    /** The tape symbol at index zero. */
+    private String tapeOrigin;
+
+    /** The tape symbols with positive indices. */
+    private ArrayList<String> tapePositive;
 
     /**
-     * The current (possibly negative) position of the tape cell that is subject
+     * The current (possibly negative) index of the tape cell that is subject
      * to read/write operations.
      *
      * Unlike the usual list interface, Tape supports negative indices. Negative
      * indices represent positions to the left of the initial head position,
      * which is always regarded as index 0 (the origin).
      * */
-    private int headPosition;
+    private int headIndex;
 
-    /**
-     * The real index of the initial head position within the underlying linked
-     * list.
-     *
-     * From a Turing Machine's point of view, the tape position of the origin is
-     * always 0. But from the point of view of the underlying linked list, the
-     * origin index will increment whenever the head moves into the far left
-     * region of the tape and requires more blank symbols to be added to the
-     * beginning of the linked list.
-     *
-     * So this means that the list index of the head will always be equal to
-     * originIndex + headPosition.
-     * */
-    private int originIndex;
 
     /**
      * Constructs a Tape from the given input string.
@@ -70,20 +61,31 @@ public class Tape {
      * @param tapeInput The initial data written to the tape.
      */
     public Tape(String tapeInput) {
-        tape = new LinkedList<>();
-        headPosition = 0;
-        originIndex = 0;
+        tapePositive = new ArrayList<>();
+        tapeNegative = new ArrayList<>();
+        headIndex = 0;
 
+        // Parse input string and initialize tapeOrigin
+        int originOffset = 0;
         String[] tokens = tapeInput.split("\\s+");
         for (int i = 0; i < tokens.length; i++) {
             String symbol = tokens[i];
             if (symbol.startsWith("[") && symbol.endsWith("]")) {
-                originIndex = i;
-                symbol = symbol.substring(1,2);
+                originOffset = i;
+                tapeOrigin = symbol.substring(1,2);
             }
-            if (!symbol.equals("")) {
-                tape.addLast(symbol);
-            }
+        }
+
+        // Initialize tapeNegative
+        tapeNegative.add("--blank-space-for-origin--");
+        for (int i = originOffset - 1; i >= 0; i--) {
+            tapeNegative.add(tokens[i]);
+        }
+
+        // Initialize tapePositive
+        tapePositive.add("--blank-space-for-origin--");
+        for (int i = 0; i < tokens.length; i++) {
+            tapePositive.add(tokens[i]);
         }
     }
 
@@ -93,22 +95,26 @@ public class Tape {
      * @param other The Tape to clone.
      */
     public Tape(Tape other) {
-        this.tape = new LinkedList<>();
-        this.headPosition = other.headPosition;
-        this.originIndex = other.originIndex;
-        this.tape.addAll(other.tape);
+        this.tapeNegative = new ArrayList<>();
+        this.tapeNegative.addAll(other.tapeNegative);
+
+        this.tapeOrigin = other.tapeOrigin;
+
+        this.tapePositive = new ArrayList<>();
+        this.tapePositive.addAll(other.tapePositive);
+
+        this.headIndex = other.headIndex;
     }
 
     /**
-     * Get the current position of the head on the tape.
+     * Get the current index of the head on the tape.
      *
-     * This returns a negative position if the head is to the left of the origin.
+     * This returns a negative index if the head is to the left of the origin.
      *
-     * @return The current position of the head using the Turing Machine's tape
-     * coordinates.
+     * @return The current index of the head.
      */
-    public int getHeadPosition() {
-        return headPosition;
+    public int getHeadIndex() {
+        return headIndex;
     }
 
     /**
@@ -121,29 +127,25 @@ public class Tape {
      * @return The size of the tape's viewed region.
      */
     public int size() {
-        return tape.size();
+        return tapePositive.size() + tapeNegative.size() - 1;
     }
 
     /**
-     * Get the tape position of the leftmost cell in the tape's viewed region.
+     * Get the tape index of the leftmost cell in the tape's viewed region.
      *
-     * This position corresponds to index 0 of the underlying linked list.
-     *
-     * @return The tape position of the leftmost cell in the tape's viewed region.
+     * @return The index of the leftmost cell in the tape's viewed region.
      */
     public int getLeftBound() {
-        return originIndex * -1;
+        return -1 * tapeNegative.size() - 1;
     }
 
     /**
-     * Get the tape position of the rightmost cell in the tape's viewed region.
+     * Get the tape index of the rightmost cell in the tape's viewed region.
      *
-     * This position corresponds to the last index of the underlying linked list.
-     *
-     * @return The tape position of the rightmost cell in the tape's viewed region.
+     * @return The index of the rightmost cell in the tape's viewed region.
      */
     public int getRightBound() {
-        return tape.size() - 1 - originIndex;
+        return tapePositive.size() - 1;
     }
 
     /**
@@ -152,8 +154,13 @@ public class Tape {
      * @param symbol The symbol to write on the tape.
      */
     public void writeSymbol(String symbol) {
-        int headListIndex = originIndex + headPosition;
-        tape.set(headListIndex, symbol);
+        if (headIndex == 0) {
+            tapeOrigin = symbol;
+        } else if (headIndex > 0) {
+            tapePositive.set(headIndex, symbol);
+        } else {
+            tapeNegative.set(headIndex * -1, symbol);
+        }
     }
 
     /**
@@ -162,20 +169,30 @@ public class Tape {
      * @return The symbol scanned by the tape head.
      */
     public String readSymbol() {
-        return tape.get(originIndex + headPosition);
+        if (headIndex == 0) {
+            return tapeOrigin;
+        } else if (headIndex > 0) {
+            return tapePositive.get(headIndex);
+        } else {
+            return tapeNegative.get(headIndex * -1);
+        }
     }
 
     /**
-     * Get the symbol at the given position on the tape.
+     * Get the symbol at the given index on the tape.
      *
-     * @param position The position in the tape's coordinate system,
-     * @return The symbol on the tape at the given position.
+     * @param index The index of the tape cell.
+     * @return The symbol on the tape at the given index.
      */
-    public String getSymbolAt(int position) {
-        if (position < getLeftBound() || position > getRightBound()) {
+    public String getSymbolAt(int index) {
+        if (index < getLeftBound() || index > getRightBound()) {
             return Tape.BLANK_SYMBOL;
+        } else if (index == 0) {
+            return tapeOrigin;
+        } else if (index > 0){
+            return tapePositive.get(index);
         } else {
-            return tape.get(originIndex + position);
+            return tapeNegative.get(-1 * index);
         }
     }
 
@@ -183,10 +200,9 @@ public class Tape {
      * Shift the tape head left along the tape.
      */
     public void shiftLeft() {
-        headPosition--;
-        if (headPosition < getLeftBound()) {
-            tape.addFirst(Tape.BLANK_SYMBOL);
-            originIndex++;
+        headIndex--;
+        if (headIndex < getLeftBound()) {
+           tapeNegative.add(Tape.BLANK_SYMBOL);
         }
     }
 
@@ -210,9 +226,9 @@ public class Tape {
      * Shift the tape head right along the tape.
      */
     public void shiftRight() {
-        headPosition++;
-        if (headPosition > getRightBound()) {
-            tape.addLast(Tape.BLANK_SYMBOL);
+        headIndex++;
+        if (headIndex > getRightBound()) {
+            tapePositive.add(Tape.BLANK_SYMBOL);
         }
     }
 
