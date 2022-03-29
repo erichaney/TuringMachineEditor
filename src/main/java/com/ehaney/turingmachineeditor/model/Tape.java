@@ -23,13 +23,13 @@ public class Tape {
     public static final String BLANK_SYMBOL = "#";
 
     /** The tape symbols with negative indices. */
-    private ArrayList<String> tapeNegative;
+    public ArrayList<String> tapeNegative;
 
     /** The tape symbol at index zero. */
-    private String tapeOrigin;
+    public String tapeOrigin;
 
     /** The tape symbols with positive indices. */
-    private ArrayList<String> tapePositive;
+    public ArrayList<String> tapePositive;
 
     /**
      * The current (possibly negative) index of the tape cell that is subject
@@ -70,22 +70,31 @@ public class Tape {
         String[] tokens = tapeInput.split("\\s+");
         for (int i = 0; i < tokens.length; i++) {
             String symbol = tokens[i];
-            if (symbol.startsWith("[") && symbol.endsWith("]")) {
+            if (symbol.startsWith("[") && symbol.endsWith("]")
+                    && !symbol.substring(1, 2).equals("")) {
                 originOffset = i;
-                tapeOrigin = symbol.substring(1,2);
+                tokens[i] = symbol.substring(1, 2);
+                tapeOrigin = tokens[i];
             }
+        }
+        if (tapeOrigin == null) {
+            tapeOrigin = tokens[0];
         }
 
         // Initialize tapeNegative
         tapeNegative.add("--blank-space-for-origin--");
         for (int i = originOffset - 1; i >= 0; i--) {
-            tapeNegative.add(tokens[i]);
+            if (!tokens[i].equals("")) {
+                tapeNegative.add(tokens[i]);
+            }
         }
 
         // Initialize tapePositive
         tapePositive.add("--blank-space-for-origin--");
-        for (int i = 0; i < tokens.length; i++) {
-            tapePositive.add(tokens[i]);
+        for (int i = originOffset + 1; i < tokens.length; i++) {
+            if (!tokens[i].equals("")) {
+                tapePositive.add(tokens[i]);
+            }
         }
     }
 
@@ -136,7 +145,7 @@ public class Tape {
      * @return The index of the leftmost cell in the tape's viewed region.
      */
     public int getLeftBound() {
-        return -1 * tapeNegative.size() - 1;
+        return -1 * (tapeNegative.size() - 1);
     }
 
     /**
@@ -246,5 +255,19 @@ public class Tape {
         for (int i = 0; i < times; i++) {
             shiftRight();
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        for (int i = getLeftBound(); i <= getRightBound(); i++) {
+            if (i == 0) {
+                str.append("[" + tapeOrigin + "] ");
+            } else {
+                str.append(getSymbolAt(i) + " ");
+            }
+        }
+        str.deleteCharAt(str.length() -1); // delete last space
+        return str.toString();
     }
 }

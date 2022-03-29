@@ -1,11 +1,10 @@
 package com.ehaney.turingmachineeditor.model;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TapeTest {
 
@@ -14,16 +13,39 @@ class TapeTest {
     class OnConstruction {
 
         @Test
+        @DisplayName("tapeOrigin equals the last bracketed symbol in input string")
+        void tape_origin_equals_the_last_bracketed_symbol_in_input_string() {
+            assertEquals("a",
+                    new Tape("[a] b c d e").readSymbol());
+            assertEquals("d",
+                    new Tape("a b [c] [d] e f").readSymbol());
+            assertEquals("a",
+                    new Tape("a b c").readSymbol());
+            assertEquals("", new Tape("").readSymbol());
+        }
+
+        @Test
+        @DisplayName("toString is equivalent to input string")
+        void to_string_is_equivalent_to_input_string() {
+            String input1 = "[a] b c d";
+            String input2 = "x [y] z";
+            String input3 = "a [z]";
+            assertEquals(input1, new Tape(input1).toString());
+            assertEquals(input2, new Tape(input2).toString());
+            assertEquals(input3, new Tape(input3).toString());
+        }
+
+        @Test
         @DisplayName("head position equals zero")
         void head_position_equals_zero() {
             assertEquals(0,
-                    new Tape("[a] b c d").getHeadPosition());
+                    new Tape("[a] b c d").getHeadIndex());
             assertEquals(0,
-                    new Tape("a b c d").getHeadPosition());
+                    new Tape("a b c d").getHeadIndex());
             assertEquals(0,
-                    new Tape("w [x] y z").getHeadPosition());
+                    new Tape("w [x] y z").getHeadIndex());
             assertEquals(0,
-                    new Tape("").getHeadPosition());
+                    new Tape("").getHeadIndex());
         }
 
         @Test
@@ -31,7 +53,7 @@ class TapeTest {
         void size_equals_the_number_of_tokens_in_the_input_string() {
             assertEquals(4,
                     new Tape("[a] b c d").size());
-            assertEquals(0,
+            assertEquals(1,
                     new Tape("").size());
             assertEquals(8,
                     new Tape("w [x] y z $ a b c").size());
@@ -123,11 +145,11 @@ class TapeTest {
         @DisplayName("head position changes when shifting")
         void head_position_changes_when_shifting() {
             Tape t = new Tape("x y [z]");
-            assertEquals(0, t.getHeadPosition());
+            assertEquals(0, t.getHeadIndex());
             t.shiftRight(3);
-            assertEquals(3, t.getHeadPosition());
+            assertEquals(3, t.getHeadIndex());
             t.shiftLeft(10);
-            assertEquals(-7, t.getHeadPosition());
+            assertEquals(-7, t.getHeadIndex());
         }
     }
 
