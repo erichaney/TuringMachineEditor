@@ -257,6 +257,15 @@ public class Tape {
         }
     }
 
+    /**
+     * Get the string representation of the tape.
+     *
+     * The head position is marked by a pair of [] around the read symbol. The
+     * string representation given here is compatible with the .tur files from
+     * the original project.
+     *
+     * @return The string representation of the tape.
+     */
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
