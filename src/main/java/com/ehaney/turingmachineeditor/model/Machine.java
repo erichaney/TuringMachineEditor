@@ -32,7 +32,7 @@ public class Machine {
     private State currentState;
 
     /** The map of all states keyed by their IDs. */
-    Map<String, State> states;
+    private Map<String, State> states;
 
     /** A record of the initial tape and the initial state. */
     private InitialConfiguration init;
@@ -52,7 +52,7 @@ public class Machine {
      */
     public Machine(Tape initialTape, State initialState) {
         stepNumber = 0;
-        tape = initialTape;
+        tape = new Tape(initialTape);
         currentState = initialState;
         states = new HashMap<>();
         states.put(initialState.getID(), initialState);
