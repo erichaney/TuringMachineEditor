@@ -279,4 +279,8 @@ public class Tape {
         str.deleteCharAt(str.length() -1); // delete last space
         return str.toString();
     }
+
+    void setPosition(int tapePosition) {
+        headIndex = tapePosition;
+    }
 }
