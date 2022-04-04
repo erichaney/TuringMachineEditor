@@ -270,8 +270,8 @@ public class Tape {
     public String toString() {
         StringBuilder str = new StringBuilder();
         for (int i = getLeftBound(); i <= getRightBound(); i++) {
-            if (i == 0) {
-                str.append("[" + tapeOrigin + "] ");
+            if (i == headIndex) {
+                str.append("[" + getSymbolAt(headIndex) + "] ");
             } else {
                 str.append(getSymbolAt(i) + " ");
             }
