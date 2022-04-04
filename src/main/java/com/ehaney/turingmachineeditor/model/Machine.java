@@ -257,5 +257,4 @@ public class Machine {
             this.readSymbol = tape.readSymbol();
         }
     }
-
 }
