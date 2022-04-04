@@ -156,4 +156,8 @@ public class State {
     public String toString() {
         return id + " " + action.toString();
     }
+
+    void setID(String newID) {
+        id = newID;
+    }
 }
