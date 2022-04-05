@@ -1,8 +1,8 @@
 package com.ehaney.turingmachineeditor.model;
 
-import java.util.HashMap;
+import javafx.beans.property.*;
+
 import java.util.List;
-import java.util.Map;
 
 /**
  * The data model of a state of a Turing Machine.
@@ -19,16 +19,16 @@ public class State {
     public enum Action {L, R, H, Y, N;}
 
     /** The unique identifier of the state. */
-    private String id;
+    private StringProperty id;
 
     /** The tape action that this state will trigger on entry. */
-    private Action action;
+    private ObjectProperty<Action> action;
 
     /**
      * The transitions leading out of this state, keyed by the symbol that must
      * be read on the tape to activate the transition.
      */
-    private Map<String, Transition> transitions;
+    private MapProperty<String, Transition> transitions;
 
     /**
      * Constructs a new state of the turing machine.
@@ -36,20 +36,30 @@ public class State {
      * @param action The tape action that this state will trigger on entry.
      */
     public State(String id, Action action) {
-        this.id = id;
-        this.action = action;
-        transitions = new HashMap<>();
+        this.id = new SimpleStringProperty(id);
+        this.action = new SimpleObjectProperty<>(action);
+        transitions = new SimpleMapProperty<>();
     }
 
     /** Get the unique identifier of this state. */
     public String getID() {
-        return id;
+        return id.get();
     }
 
-    /** Get the tape action that this state will trigger on entry. */
-    public Action getAction() {
-        return action;
+    /**
+     * Set the id.
+     *
+     * This method can only be called by Machine to ensure unique ids.
+     */
+    void setID(String newID) {
+        id.set(newID);
     }
+
+    /** Get the property of the id for binding. */
+    public StringProperty idProperty() { return id; }
+
+    /** Get the tape action that this state will trigger on entry. */
+    public Action getAction() { return action.get(); }
 
     /**
      * Change the tape action that this state will trigger on entry.
@@ -57,7 +67,12 @@ public class State {
      * @param action The tape action.
      */
     public void setAction(Action action) {
-        this.action = action;
+        this.action.set(action);
+    }
+
+    /** Get the property of the action for binding. */
+    public ObjectProperty<Action> actionProperty() {
+        return action;
     }
 
     /**
@@ -155,9 +170,5 @@ public class State {
     @Override
     public String toString() {
         return id + " " + action.toString();
-    }
-
-    void setID(String newID) {
-        id = newID;
     }
 }
